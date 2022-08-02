@@ -11,5 +11,5 @@ const connections = new mongoose.Schema ({
     }
 })
 
-const Connections = mongoose.model("users", connections );
+const Connections = mongoose.model("Connections", connections );
 module.exports = Connections;

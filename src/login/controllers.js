@@ -1,8 +1,6 @@
 const User = require("./models") 
 
 exports.signUp = async(req, res) => {
-    console.log("ran")
-    console.log(req.body)
     try {
         const newUser = await User.create(req.body);
         res.status(200).send({ user: newUser.username });
