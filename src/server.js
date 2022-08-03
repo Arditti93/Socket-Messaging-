@@ -3,6 +3,7 @@ require("./db/connection"); // Run db connection
 var express = require('express');
 const app = express();
 const userRouter = require("./login/routes")
+const Connections = require("./models/connectionModel")
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
@@ -11,7 +12,7 @@ var port = process.env.PORT || 3000;
 app.use(express.json()); 
 app.use(userRouter)
 
-const { addConnection, removeConnection, listConnections, saveMsg } = require("./socketControllers")
+const { addConnection, removeConnection, saveMsg } = require("./socketControllers")
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/public/index.html');
@@ -20,10 +21,10 @@ app.get('/', function(req, res){
 io.on('connection', (socket) => {
     console.log("connect " + socket.id)
     let username = "Placeholder"
-    addConnection(socket.id, username )
+    addConnection(socket.id, username)
     listConnections()
 
-    socket.on('chat message', function(msg){ß
+    socket.on('chat message', function(msg){
       io.emit('chat message', msg);
       saveMsg(msg, socket.id, username)
     });
@@ -37,3 +38,19 @@ io.on('connection', (socket) => {
 http.listen(port, function(){
   console.log('listening on *:3000');
 }); 
+
+async function listConnections (){
+  let output
+  try {
+      const listUsers = await Connections.find({});
+      const result = listUsers.map((u) => {
+        return u.connectionId
+      })
+      output = result
+  } catch (error) {
+      output  = error
+  } finally {
+      io.emit('user connected', output)
+      return output
+  }
+}

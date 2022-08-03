@@ -38,13 +38,13 @@ exports.listConnections = async () => {
     let output
     try {
         const listUsers = await Connections.find({});
-        output = listUsers
-        console.log("in try")
+        const result = listUsers.map((u) => {
+          return u.connectionId
+        })
+        output = result
     } catch (error) {
         output  = error
-        console.log("in catch")
     } finally {
-        console.log(output)
         return output
     }
 }

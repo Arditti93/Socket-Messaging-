@@ -22,6 +22,7 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
         $(function () {
+            $('form').hide() 
             var socket = io();
             $('form').submit(function(e) {
                 console.log("ran")
@@ -30,9 +31,15 @@
                 $('#m').val('');
                 return false;
             });
+
             socket.on('chat message', function(msg){
               $('#messages').append($('<li>').text(msg));
             });      
+
+            socket.on('user connected', function(id){
+              console.log('connectionIds')
+              console.log(id)
+            })
         });
     </script>
   </body>
