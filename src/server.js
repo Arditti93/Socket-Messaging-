@@ -12,7 +12,7 @@ var port = process.env.PORT || 3000;
 app.use(express.json()); 
 app.use(userRouter)
 
-const { addConnection, removeConnection, saveMsg } = require("./socketControllers")
+const { addConnection, removeConnection, saveMsg, listConnections } = require("./socketControllers")
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/public/index.html');
@@ -22,8 +22,9 @@ io.on('connection', (socket) => {
     console.log("connect " + socket.id)
     let username = "Placeholder"
     addConnection(socket.id, username)
-    listConnections()
-
+    let connections = listConnections() 
+    io.emit('user connected', connections)
+    
     socket.on('chat message', function(msg){
       io.emit('chat message', msg);
       saveMsg(msg, socket.id, username)
@@ -39,18 +40,3 @@ http.listen(port, function(){
   console.log('listening on *:3000');
 }); 
 
-async function listConnections (){
-  let output
-  try {
-      const listUsers = await Connections.find({});
-      const result = listUsers.map((u) => {
-        return u.connectionId
-      })
-      output = result
-  } catch (error) {
-      output  = error
-  } finally {
-      io.emit('user connected', output)
-      return output
-  }
-}

@@ -47,4 +47,4 @@ exports.listConnections = async () => {
     } finally {
         return output
     }
-}
+} 
