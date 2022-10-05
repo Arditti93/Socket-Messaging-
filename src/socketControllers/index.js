@@ -1,10 +1,10 @@
 const Msg = require("../models/models") 
 const Connections = require("../models/connectionModel")
 
-exports.addConnection = async (connectionId) => {
+exports.addConnection = async (connectionId, sub) => {
     let connection = {
       "connectionId": connectionId,
-      "username": "Placeholder"
+      "username": sub
     } 
     try{
       const newConnection = await Connections.create(connection)
@@ -17,7 +17,7 @@ exports.removeConnection = async (connectionId) => {
     try{
         await Connections.deleteOne({connectionId: connectionId})
     } catch (error) {
-        console.log(erorr)
+        console.log(error)
     }
 }
   
@@ -39,7 +39,7 @@ exports.listConnections = async () => {
     try {
         const listUsers = await Connections.find({});
         const result = listUsers.map((u) => {
-          return u.connectionId
+          return u
         })
         output = result
     } catch (error) {
