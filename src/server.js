@@ -15,7 +15,7 @@ const io = require('socket.io')(http,{
 
 app.use(cors())
 
-const { addConnection, removeConnection, saveMsg, listConnections } = require("./socketControllers") 
+const { addConnection, removeConnection, saveMsg, listConnections, findConnection } = require("./socketControllers") 
 
 io.on('connection', async (socket) => {
 
@@ -28,15 +28,16 @@ io.on('connection', async (socket) => {
     io.emit('connected_clients', connections)
   })
   
-  socket.on('receive_msg', function(msg){
-    console.log(msg)
-    io.emit('broadcast_message', msg);
-    // saveMsg(msg, socket.id, username)
+  socket.on('receive_msg', function(msg, username){
+    io.emit('broadcast_message', msg, username);
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', async () => {
     console.log("disconnect " + socket.id)
-    removeConnection(socket.id)
+    let response = await findConnection('connectionId', socket.id)
+    console.log(response)
+    io.emit('remove_user', response.username)
+    await removeConnection(socket.id)
   }); 
 
   socket.on("connect_error", (err) => {

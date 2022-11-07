@@ -15,10 +15,19 @@ exports.addConnection = async (connectionId, sub) => {
 
 exports.removeConnection = async (connectionId) => {
     try{
-        await Connections.deleteOne({connectionId: connectionId})
+        const connection =  await Connections.deleteOne({connectionId: connectionId})
+        console.log(connection)
     } catch (error) {
         console.log(error)
     }
+} 
+
+exports.findConnection = async (key, filter) => {
+  try {
+    return await Connections.findOne({[key]: filter})
+  } catch (error) {
+    console.log(error)
+  }
 }
   
 exports.saveMsg = async (msg, socketId, username) =>{  
